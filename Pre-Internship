@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Internship Report — Prerapat Jintana</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+:root{
+  --navy:#0A2540;
+  --navy-deep:#06182d;
+  --blue:#2563EB;
+  --orange:#F59E0B;
+  --bg:#FFFFFF;
+  --gray-light:#F5F7FA;
+  --gray-dark:#374151;
+  --line:#E2E8F0;
+  --maxw:1180px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;scroll-snap-type:y mandatory;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--navy);overflow-x:hidden;}
+::selection{background:var(--orange);color:#fff;}
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--orange));z-index:999;width:0%;transition:width .1s linear;}
+#navdots{position:fixed;right:18px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:998;}
+#navdots button{width:8px;height:8px;border-radius:50%;border:none;background:#cbd5e1;cursor:pointer;transition:all .3s ease;padding:0;}
+#navdots button.active{background:var(--orange);height:22px;border-radius:5px;}
+@media (max-width:768px){#navdots{display:none;}}
+.slide{min-height:100vh;width:100%;display:flex;align-items:center;justify-content:center;position:relative;padding:90px 6vw;border-bottom:1px solid var(--line);scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden;}
+.click-hint{
+  position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:998;
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:#94a3b8;display:flex;align-items:center;gap:8px;opacity:.85;pointer-events:none;
+  animation:hintfade 2.6s ease-in-out infinite;
+}
+@keyframes hintfade{0%,100%{opacity:.35;}50%{opacity:.9;}}
+.click-hint svg{width:14px;height:14px;}
+.inner{max-width:var(--maxw);width:100%;}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--blue);font-weight:500;display:flex;align-items:center;gap:10px;margin-bottom:22px;opacity:0;transform:translateY(12px);transition:all .7s cubic-bezier(.16,1,.3,1);}
+.eyebrow .dash{width:24px;height:1px;background:var(--orange);}
+.reveal{opacity:0;transform:translateY(28px);transition:all .8s cubic-bezier(.16,1,.3,1);}
+.in-view .reveal{opacity:1;transform:translateY(0);}
+.in-view .eyebrow{opacity:1;transform:translateY(0);}
+.d1{transition-delay:.05s;} .d2{transition-delay:.14s;} .d3{transition-delay:.22s;}
+.d4{transition-delay:.3s;} .d5{transition-delay:.38s;} .d6{transition-delay:.46s;}
+h1{font-size:clamp(40px,6vw,72px);font-weight:800;line-height:1.04;letter-spacing:-.02em;}
+h2{font-size:clamp(30px,4vw,46px);font-weight:800;line-height:1.08;letter-spacing:-.02em;margin-bottom:10px;}
+h3{font-size:20px;font-weight:700;}
+p.lead{font-size:clamp(16px,1.6vw,20px);color:var(--gray-dark);font-weight:400;line-height:1.6;max-width:640px;}
+.accent{color:var(--orange);}
+.blue-text{color:var(--blue);}
+#s1{background:radial-gradient(ellipse at top right, #0d3158 0%, var(--navy) 45%, var(--navy-deep) 100%);color:#fff;overflow:hidden;}
+#s1::before{content:'';position:absolute;inset:0;background-image:linear-gradient(transparent 95%, rgba(255,255,255,.04) 95%),linear-gradient(90deg, transparent 95%, rgba(255,255,255,.04) 95%);background-size:48px 48px;opacity:.5;}
+.hero-grid-anim{position:absolute;inset:0;pointer-events:none;}
+.hero-grid-anim span{position:absolute;border-radius:50%;background:var(--orange);opacity:.5;filter:blur(1px);animation:float 9s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-26px) scale(1.3);}}
+.hero-inner{position:relative;z-index:2;}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#bcd2f0;border:1px solid rgba(255,255,255,.18);padding:8px 16px;border-radius:30px;margin-bottom:34px;backdrop-filter:blur(6px);background:rgba(255,255,255,.04);}
+.hero-title{font-size:clamp(46px,7.4vw,92px);font-weight:900;line-height:1.0;letter-spacing:-.025em;color:#fff;}
+.hero-title .line2{color:var(--orange);}
+.hero-sub{font-size:clamp(16px,1.8vw,21px);color:#b9c7dc;margin-top:24px;max-width:560px;line-height:1.6;font-weight:300;}
+.hero-bottom{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:30px;margin-top:80px;padding-top:34px;border-top:1px solid rgba(255,255,255,.14);}
+.hero-name{font-size:24px;font-weight:700;color:#fff;}
+.hero-meta{font-family:'JetBrains Mono',monospace;font-size:13px;color:#8ea7c8;line-height:1.7;}
+.hero-school{text-align:right;font-size:15px;color:#cdd9ea;}
+.hero-school strong{display:block;color:#fff;font-size:17px;font-weight:700;}
+.cardgrid{display:grid;gap:20px;}
+.cols-3{grid-template-columns:repeat(3,1fr);}
+.cols-4{grid-template-columns:repeat(4,1fr);}
+.cols-2{grid-template-columns:repeat(2,1fr);}
+@media (max-width:900px){.cols-3,.cols-4,.cols-2{grid-template-columns:1fr 1fr;}}
+@media (max-width:600px){.cols-3,.cols-4,.cols-2{grid-template-columns:1fr;}}
+.card{background:var(--gray-light);border:1px solid var(--line);border-radius:14px;padding:28px 24px;transition:all .35s cubic-bezier(.16,1,.3,1);position:relative;overflow:hidden;}
+.card:hover{transform:translateY(-6px);box-shadow:0 18px 40px -16px rgba(10,37,64,.18);border-color:var(--blue);}
+.card .ic{width:42px;height:42px;border-radius:10px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;margin-bottom:16px;}
+.card .ic svg{width:20px;height:20px;}
+.card h3{font-size:16px;margin-bottom:6px;}
+.card p{font-size:13.5px;color:var(--gray-dark);line-height:1.5;}
+.stat-card{background:var(--navy);color:#fff;border-radius:14px;padding:28px 22px;}
+.stat-card .num{font-size:36px;font-weight:800;color:var(--orange);font-family:'JetBrains Mono',monospace;}
+.stat-card .lbl{font-size:13px;color:#b9c7dc;margin-top:6px;letter-spacing:.03em;}
+.company-wrap{display:grid;grid-template-columns:1.1fr 1fr;gap:60px;align-items:start;}
+@media (max-width:900px){.company-wrap{grid-template-columns:1fr;}}
+.roadmap{position:relative;padding-left:0;margin-top:50px;}
+.roadmap-line{position:absolute;left:21px;top:14px;bottom:14px;width:2px;background:var(--line);}
+.road-item{display:flex;gap:24px;padding:22px 0;position:relative;}
+.road-dot{width:44px;height:44px;border-radius:50%;background:var(--bg);border:2px solid var(--blue);display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1;color:var(--blue);font-weight:700;font-family:'JetBrains Mono',monospace;font-size:14px;}
+.road-content h3{margin-bottom:5px;}
+.road-content p{font-size:14.5px;color:var(--gray-dark);max-width:560px;line-height:1.55;}
+.flow{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:center;margin-top:40px;}
+.flow-node{background:var(--navy);color:#fff;border-radius:12px;padding:18px 22px;min-width:150px;text-align:center;font-weight:600;font-size:14.5px;position:relative;}
+.flow-node.alt{background:var(--blue);}
+.flow-arrow{color:var(--orange);font-size:20px;}
+@media(max-width:760px){.flow{flex-direction:column;}.flow-arrow{transform:rotate(90deg);}}
+.tech-tag{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:30px;padding:9px 16px;font-size:13.5px;font-weight:500;color:var(--navy);margin:5px;}
+.tech-tag svg{width:15px;height:15px;color:var(--blue);}
+.tagcloud{display:flex;flex-wrap:wrap;margin-top:6px;}
+.case{background:var(--gray-light);border-radius:16px;border:1px solid var(--line);padding:26px;display:flex;flex-direction:column;gap:14px;}
+.case .tagrow{display:flex;gap:8px;align-items:center;}
+.tagpill{font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 10px;border-radius:20px;font-weight:600;letter-spacing:.03em;}
+.tagpill.problem{background:#fee2e2;color:#b91c1c;}
+.tagpill.method{background:#dbeafe;color:#1d4ed8;}
+.case h3{font-size:16px;}
+.case p{font-size:13.5px;color:var(--gray-dark);line-height:1.55;}
+.skill-col h3{display:flex;align-items:center;gap:10px;color:var(--blue);font-size:15px;letter-spacing:.02em;text-transform:uppercase;margin-bottom:18px;}
+.skill-row{display:flex;justify-content:space-between;font-size:14px;margin-bottom:14px;color:var(--navy);font-weight:500;}
+.bar-bg{height:6px;background:var(--line);border-radius:6px;margin-top:6px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--blue),var(--orange));width:0%;transition:width 1.4s cubic-bezier(.16,1,.3,1);}
+.in-view .bar-fill{width:var(--w);}
+.kpi{text-align:center;padding:34px 16px;border-radius:16px;background:var(--gray-light);border:1px solid var(--line);}
+.kpi .n{font-size:40px;font-weight:800;color:var(--navy);font-family:'JetBrains Mono',monospace;}
+.kpi .n .accent{color:var(--orange);}
+.kpi .l{font-size:13px;color:var(--gray-dark);margin-top:8px;letter-spacing:.02em;}
+.future-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px;}
+@media(max-width:900px){.future-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:600px){.future-grid{grid-template-columns:1fr;}}
+.future-card{background:var(--navy);color:#fff;border-radius:14px;padding:22px;border-top:3px solid var(--orange);}
+.future-card .ic{width:34px;height:34px;color:var(--orange);margin-bottom:14px;}
+.future-card h3{font-size:15px;color:#fff;}
+.future-card p{font-size:12.5px;color:#b9c7dc;margin-top:6px;line-height:1.5;}
+#s12{background:var(--navy);color:#fff;}
+#s12 .quote{font-size:clamp(22px,3vw,32px);font-weight:600;line-height:1.4;max-width:780px;font-style:italic;color:#fff;border-left:3px solid var(--orange);padding-left:28px;margin-top:36px;}
+#s12 .quote span{color:var(--orange);}
+.ack-list{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:36px;}
+@media(max-width:700px){.ack-list{grid-template-columns:1fr;}}
+.ack-item{display:flex;gap:14px;align-items:flex-start;padding:18px;border-radius:12px;background:var(--gray-light);}
+.ack-item svg{color:var(--orange);width:20px;height:20px;flex-shrink:0;margin-top:2px;}
+.ack-item div{font-size:14px;color:var(--gray-dark);}
+.ack-item strong{display:block;color:var(--navy);font-size:15px;}
+#s14{background:var(--navy-deep);color:#fff;text-align:center;flex-direction:column;}
+#s14 h1{font-size:clamp(50px,8vw,110px);font-weight:900;}
+#s14 p{color:#9db3cf;font-size:18px;margin-top:18px;}
+.pulse-ring{position:absolute;width:340px;height:340px;border:1px solid rgba(245,158,11,.25);border-radius:50%;animation:pulse 4s ease-in-out infinite;}
+@keyframes pulse{0%{transform:scale(.8);opacity:.6;}50%{transform:scale(1.25);opacity:0;}100%{transform:scale(.8);opacity:0;}}
+footer.slide-foot{position:absolute;bottom:26px;left:6vw;right:6vw;display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:11px;color:#94a3b8;letter-spacing:.05em;}
+#s1 footer.slide-foot, #s12 footer.slide-foot, #s14 footer.slide-foot{color:rgba(255,255,255,.4);}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important;}}
+
+/* richer per-slide motion */
+.reveal{opacity:0;transform:translateY(34px) scale(.97);transition:opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1);}
+.in-view .reveal{opacity:1;transform:translateY(0) scale(1);}
+.card,.kpi,.case,.future-card,.stat-card,.ack-item{transition:transform .4s cubic-bezier(.16,1,.3,1), box-shadow .4s ease, opacity .4s ease, border-color .4s ease;}
+.in-view .card .ic, .in-view .future-card .ic{animation:icpop .6s cubic-bezier(.34,1.56,.64,1) backwards;animation-delay:.1s;}
+@keyframes icpop{0%{transform:scale(0) rotate(-25deg);opacity:0;}100%{transform:scale(1) rotate(0);opacity:1;}}
+.road-dot{transition:transform .5s cubic-bezier(.34,1.56,.64,1);}
+.in-view .road-dot{animation:dotpop .55s cubic-bezier(.34,1.56,.64,1) backwards;}
+@keyframes dotpop{0%{transform:scale(0);}100%{transform:scale(1);}}
+.in-view .flow-node{animation:nodeIn .6s cubic-bezier(.16,1,.3,1) backwards;}
+.flow-node:nth-of-type(1){animation-delay:.05s;}
+.in-view .quote{animation:quoteglow 2.4s ease-in-out .6s 1;}
+@keyframes nodeIn{0%{opacity:0;transform:translateX(-14px);}100%{opacity:1;transform:translateX(0);}}
+@keyframes quoteglow{0%,100%{border-left-color:var(--orange);}50%{border-left-color:#fff;}}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<div id="navdots"></div>
+<div class="click-hint"><i data-lucide="mouse-pointer-click"></i> Click or press Enter / ↓ to continue</div>
+
+<section class="slide" id="s1">
+  <div class="hero-grid-anim">
+    <span style="width:6px;height:6px;left:18%;top:30%;animation-delay:0s;"></span>
+    <span style="width:4px;height:4px;left:72%;top:20%;animation-delay:1.2s;"></span>
+    <span style="width:5px;height:5px;left:85%;top:60%;animation-delay:2.4s;"></span>
+    <span style="width:3px;height:3px;left:40%;top:75%;animation-delay:.6s;"></span>
+    <span style="width:4px;height:4px;left:60%;top:42%;animation-delay:1.8s;"></span>
+  </div>
+  <div class="inner hero-inner">
+    <div class="hero-tag reveal d1"><i data-lucide="cpu"></i> Cooperative Education Report</div>
+    <h1 class="hero-title reveal d2">Internship<br><span class="line2">Report.</span></h1>
+    <p class="hero-sub reveal d3">A 9-week journey through industrial automation, PLC systems, and electrical maintenance.</p>
+    <div class="hero-bottom reveal d4">
+      <div>
+        <div class="hero-name">Prerapat Jintana</div>
+        <div class="hero-meta">STUDENT ID 65050343 · MECHANICAL ENGINEERING</div>
+      </div>
+      <div class="hero-school">Bachelor's Degree Programme
+        <strong>Burapha University</strong>
+      </div>
+    </div>
+  </div>
+  <footer class="slide-foot"><span>M2K ACT CO., LTD.</span><span>01 / 14</span></footer>
+</section>
+
+<section class="slide" id="s2">
+  <div class="inner">
+    <div class="eyebrow"><span class="dash"></span>COMPANY OVERVIEW</div>
+    <div class="company-wrap">
+      <div class="reveal d2">
+        <h2>M2K ACT Co., Ltd.</h2>
+        <p class="lead">Established in 2006, M2K Activity Co., Ltd. has grown into a trusted expert in the buying and selling of used SMT machines, industrial equipment, and PCBA (Printed Circuit Board Assembly) services in Thailand.</p>
+        <div class="cardgrid cols-2" style="margin-top:34px;">
+          <div class="card"><div class="ic"><i data-lucide="factory"></i></div><h3>Manufacturing Support</h3><p>Sustains uptime across automated production lines.</p></div>
+          <div class="card"><div class="ic"><i data-lucide="settings-2"></i></div><h3>Automation Engineering</h3><p>Designs and maintains PLC-driven control systems.</p></div>
+        </div>
+      </div>
+      <div class="reveal d3">
+        <div class="cardgrid cols-2">
+          <div class="stat-card"><div class="num">9</div><div class="lbl">Weeks of Industrial Placement</div></div>
+          <div class="stat-card"><div class="num">3</div><div class="lbl">PLC Platforms Used</div></div>
+          <div class="stat-card"><div class="num">9+</div><div class="lbl">Real Engineering Problems Solved</div></div>
+          <div class="stat-card"><div class="num">14</div><div class="lbl">Technical Domains Covered</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer class="slide-foot"><span>COMPANY OVERVIEW</span><span>02 / 14</span></footer>
+</section>
+
+<section class="slide" id="s3">
+  <div class="inner">
+    <div class="eyebrow"><span class="dash"></span>INTERNSHIP OBJECTIVES</div>
+    <h2 class="reveal d2">From classroom theory <span class="blue-text">to industrial practice.</span></h2>
+    <div class="roadmap">
+      <div class="roadmap-line"></div>
+      <div class="road-item reveal d1"><div class="road-dot">01</div><div class="road-content"><h3>Apply Engineering Fundamentals</h3><p>Translate mechanical and control theory into hands-on PLC, electrical, and automation work.</p></div></div>
+      <div class="road-item reveal d2"><div class="road-dot">02</div><div class="road-content"><h3>Build Technical Competency</h3><p>Develop fluency in PLC programming, troubleshooting, and industrial maintenance practice.</p></div></div>
+      <div class="road-item reveal d3"><div class="road-dot">03</div><div class="road-content"><h3>Strengthen Problem-Solving</h3><p>Diagnose and resolve real production issues using structured engineering analysis.</p></div></div>
+      <div class="road-item reveal d4"><div class="road-dot">04</div><div class="road-content"><h3>Prepare for Industry</h3><p>Develop the professional discipline, documentation, and teamwork expected of a working engineer.</p></div></div>
+    </div>
+  </div>
+  <footer class="slide-foot"><span>INTERNSHIP OBJECTIVES</span><span>03 / 14</span></footer>
+</section>
+
+<section class="slide" id="s4">
+  <div class="inner">
+    <div class="eyebrow"><span class="dash"></span>ROLES & RESPONSIBILITIES</div>
+    <h2 class="reveal d1">What I owned on the floor.</h2>
+    <div class="cardgrid cols-4" style="margin-top:40px;">
+      <div class="card reveal d1"><div class="ic"><i data-lucide="terminal-square"></i></div><h3>PLC Support</h3><p>Monitoring, backup, and parameter configuration.</p></div>
+      <div class="card reveal d2"><div class="ic"><i data-lucide="wrench"></i></div><h3>Machine Maintenance</h3><p>Preventive and corrective servicing of equipment.</p></div>
+      <div class="card reveal d3"><div class="ic"><i data-lucide="git-branch"></i></div><h3>Production Support</h3><p>Keeping automated lines running without disruption.</p></div>
+      <div class="card reveal d4"><div class="ic"><i data-lucide="zap"></i></div><h3>Electrical Inspection</h3><p>Cabinet checks, wiring verification, sensor testing.</p></div>
+      <div class="card reveal d1"><div class="ic"><i data-lucide="search"></i></div><h3>Troubleshooting</h3><p>Tracing faults across PLC, electrical & network layers.</p></div>
+      <div class="card reveal d2"><div class="ic"><i data-lucide="shield-check"></i></div><h3>Preventive Maintenance</h3><p>Scheduled inspection to avoid unplanned downtime.</p></div>
+      <div class="card reveal d3"><div class="ic"><i data-lucide="file-text"></i></div><h3>Documentation</h3><p>Recording fixes, configurations, and test results.</p></div>
+      <div class="card reveal d4"><div class="ic"><i data-lucide="users"></i></div><h3>Team Collaboration</h3><p>Working alongside engineers and technicians daily.</p></div>
+    </div>
+  </div>
+  <footer class="slide-foot"><span>ROLES & RESPONSIBILITIES</span><span>04 / 14</span></footer>
+</section>
+
+<section class="slide" id="s5" style="background:var(--gray-light);">
+  <div class="inner">
+    <div class="eyebrow"><span class="dash"></span>ENGINEERING WORKFLOW</div>
+    <h2 class="reveal d1">The diagnostic loop I followed.</h2>
+    <p class="lead reveal d2">Every fault, from a stalled servo to a dropped PLC signal, moved through the same disciplined process.</p>
+    <div class="flow reveal d3">
+      <div class="flow-node">Problem Detection</div><div class="flow-arrow">→</div>
+      <div class="flow-node alt">Inspection</div><div class="flow-arrow">→</div>
+      <div class="flow-node">Data Collection</div><div class="flow-arrow">→</div>
+      <div class="flow-node alt">PLC Monitoring</div>
+    </div>
+    <div class="flow reveal d4" style="margin-top:6px;">
+      <div class="flow-node">Troubleshooting</div><div class="flow-arrow">→</div>
+      <div class="flow-node alt">Testing</div><div class="flow-arrow">→</div>
+      <div class="flow-node">Machine Recovery</div><div class="flow-arrow">→</div>
+      <div class="flow-node" style="background:var(--orange);">Documentation</div>
+    </div>
+  </div>
+  <footer class="slide-foot"><span>ENGINEERING WORKFLOW</span><span>05 / 14</span></footer>
+</section>
+
+<section class="slide" id="s6">
+  <div class="inner">
+    <div class="eyebrow"><span class="dash"></span>TECHNICAL KNOWLEDGE & TOOLS</div>
+    <h2 class="reveal d1">The stack behind the work.</h2>
+    <div class="cardgrid cols-3" style="margin-top:36px;">
+      <div class="card reveal d1">
+        <div class="ic"><i data-lucide="code-2"></i></div><h3>Software Platforms</h3>
+        <div class="tagcloud">
+          <span class="tech-tag"><i data-lucide="square-code"></i>GX Works3</span>
+          <span class="tech-tag"><i data-lucide="square-code"></i>FPWIN</span>
+          <span class="tech-tag"><i data-lucide="square-code"></i>CX-Program</span>
+        </div>
+      </div>
+      <div class="card reveal d2">
+        <div class="ic"><i data-lucide="cpu"></i></div><h3>Hardware Systems</h3>
+        <div class="tagcloud">
+          <span class="tech-tag">Mitsubishi Q-Series PLC</span><span class="tech-tag">I/O Modules</span>
+          <span class="tech-tag">Servo Motors</span><span class="tech-tag">Inverters</span>
+          <span class="tech-tag">Control Cabinets</span>
+        </div>
+      </div>
+      <div class="card reveal d3">
+        <div class="ic"><i data-lucide="wrench"></i></div><h3>Engineering Tools</h3>
+        <div class="tagcloud">
+          <span class="tech-tag">Multimeter</span><span class="tech-tag">Programming Cable</span>
+          <span class="tech-tag">Industrial PC</span><span class="tech-tag">Hand Tools</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer class="slide-foot"><span>TECHNICAL KNOWLEDGE & TOOLS</span><span>06 / 14</span></footer>
+</section>
+
+<section class="slide" id="s7" style="background:var(--gray-light);">
+  <div class="inner">
+    <div class="eyebrow"><span class="dash"></span>PROJECTS & PRACTICAL EXPERIENCE</div>
+    <h2 class="reveal d1">Hands on equipment.</h2>
+    <div class="cardgrid cols-3" style="margin-top:36px;">
+      <div class="card reveal d1"><div class="ic"><i data-lucide="activity"></i></div><h3>Machine Maintenance</h3><p>Performed preventive and corrective maintenance across production equipment.</p></div>
+      <div class="card reveal d2"><div class="ic"><i data-lucide="layout-grid"></i></div><h3>PLC Support & Commissioning</h3><p>Backed up programs, monitored logic, and assisted machine commissioning.</p></div>
+      <div class="card reveal d3"><div class="ic"><i data-lucide="git-pull-request-arrow"></i></div><h3>Troubleshooting</h3><p>Diagnosed PLC, electrical, and sensor faults under live production conditions.</p></div>
+      <div class="card reveal d4"><div class="ic"><i data-lucide="package-check"></i></div><h3>Production Support</h3><p>Sustained line uptime through rapid response to equipment issues.</p></div>
+      <div class="card reveal d5"><div class="ic"><i data-lucide="clipboard-list"></i></div><h3>Industrial Documentation</h3><p>Logged inspections, fixes, and configurations for engineering records.</p></div>
+      <div class="card reveal d6"><div class="ic"><i data-lucide="radio-tower"></i></div><h3>Network & Communication</h3><p>Resolved industrial network and PLC communication interruptions.</p></div>
+    </div>
+  </div>
+  <footer class="slide-foot"><span>PROJECTS & PRACTICAL EXPERIENCE</span><span>07 / 14</span></footer>
+</section>
+
+<section class="slide" id="s8">
+  <div class="inner">
+    <div class="eyebrow"><span class="dash"></span>ENGINEERING PROBLEM SOLVING</div>
+    <h2 class="reveal d1">Case studies from the production line.</h2>
+    <div class="cardgrid cols-3" style="margin-top:36px;">
+      <div class="case reveal d1">
+        <div class="tagrow"><span class="tagpill problem">PROBLEM</span></div>
+        <h3>PLC Communication Failure</h3>
+        <p>A line halted after losing PLC-to-network communication.</p>
+        <div class="tagrow"><span class="tagpill method">SIGNAL TRACING</span><span class="tagpill method">I/O MONITORING</span></div>
+        <p>Traced the signal path and restored the link by isolating a faulty network node.</p>
+      </div>
+      <div class="case reveal d2">
+        <div class="tagrow"><span class="tagpill problem">PROBLEM</span></div>
+        <h3>Unexpected Machine Shutdown</h3>
+        <p>A machine tripped intermittently with no clear fault code.</p>
+        <div class="tagrow"><span class="tagpill method">LOGIC ANALYSIS</span><span class="tagpill method">ONLINE MONITORING</span></div>
+        <p>Identified incorrect PLC logic and corrected the sequencing condition.</p>
+      </div>
+      <div class="case reveal d3">
+        <div class="tagrow"><span class="tagpill problem">PROBLEM</span></div>
+        <h3>Sensor Malfunction</h3>
+        <p>False signals from a worn proximity sensor disrupted the cycle.</p>
+        <div class="tagrow"><span class="tagpill method">ELECTRICAL TEST</span><span class="tagpill method">VISUAL CHECK</span></div>
+        <p>Confirmed the fault through measurement and replaced the component.</p>
+      </div>
+    </div>
+  </div>
+  <footer class="slide-foot"><span>ENGINEERING PROBLEM SOLVING</span><span>08 / 14</span></footer>
+</section>
+
+<section class="slide" id="s9" style="background:var(--gray-light);">
+  <div class="inner">
+    <div class="eyebrow"><span class="dash"></span>SKILLS DEVELOPED</div>
+    <h2 class="reveal d1">Built through repetition on real systems.</h2>
+    <div class="cardgrid cols-2" style="margin-top:40px;">
+      <div class="reveal d2 skill-col">
+        <h3><i data-lucide="cog" style="width:16px;height:16px;"></i> Technical Skills</h3>
+        <div class="skill-row">PLC Programming & Monitoring<span>92%</span></div><div class="bar-bg"><div class="bar-fill" style="--w:92%;"></div></div>
+        <div style="height:14px;"></div>
+        <div class="skill-row">Electrical Troubleshooting<span>88%</span></div><div class="bar-bg"><div class="bar-fill" style="--w:88%;"></div></div>
+        <div style="height:14px;"></div>
+        <div class="skill-row">Machine Maintenance<span>85%</span></div><div class="bar-bg"><div class="bar-fill" style="--w:85%;"></div></div>
+        <div style="height:14px;"></div>
+        <div class="skill-row">Control Logic Analysis<span>80%</span></div><div class="bar-bg"><div class="bar-fill" style="--w:80%;"></div></div>
+      </div>
+      <div class="reveal d3 skill-col">
+        <h3><i data-lucide="users-round" style="width:16px;height:16px;"></i> Professional Skills</h3>
+        <div class="skill-row">Problem Solving & Critical Thinking<span>90%</span></div><div class="bar-bg"><div class="bar-fill" style="--w:90%;"></div></div>
+        <div style="height:14px;"></div>
+        <div class="skill-row">Technical Communication<span>84%</span></div><div class="bar-bg"><div class="bar-fill" style="--w:84%;"></div></div>
+        <div style="height:14px;"></div>
+        <div class="skill-row">Teamwork & Responsibility<span>87%</span></div><div class="bar-bg"><div class="bar-fill" style="--w:87%;"></div></div>
+        <div style="height:14px;"></div>
+        <div class="skill-row">Adaptability & Documentation<span>83%</span></div><div class="bar-bg"><div class="bar-fill" style="--w:83%;"></div></div>
+      </div>
+    </div>
+  </div>
+  <footer class="slide-foot"><span>SKILLS DEVELOPED</span><span>09 / 14</span></footer>
+</section>
+
+<section class="slide" id="s10">
+  <div class="inner">
+    <div class="eyebrow"><span class="dash"></span>OUTCOMES & ACHIEVEMENTS</div>
+    <h2 class="reveal d1">What 9 weeks actually produced.</h2>
+    <div class="cardgrid cols-4" style="margin-top:38px;">
+      <div class="kpi reveal d1"><div class="n">9<span class="accent">+</span></div><div class="l">Engineering Faults Resolved</div></div>
+      <div class="kpi reveal d2"><div class="n">3</div><div class="l">PLC Platforms Mastered</div></div>
+      <div class="kpi reveal d3"><div class="n">14</div><div class="l">Technical Domains Practiced</div></div>
+      <div class="kpi reveal d4"><div class="n">100<span class="accent">%</span></div><div class="l">Internship Completed</div></div>
+    </div>
+    <p class="lead reveal d2" style="margin-top:34px;">Gained hands-on industrial readiness, technical fluency in automation systems, and the maintenance experience to support real production environments — alongside the teamwork and discipline expected on an engineering team.</p>
+  </div>
+  <footer class="slide-foot"><span>OUTCOMES & ACHIEVEMENTS</span><span>10 / 14</span></footer>
+</section>
+
+<section class="slide" id="s11" style="background:var(--gray-light);">
+  <div class="inner">
+    <div class="eyebrow"><span class="dash"></span>FUTURE CAREER DEVELOPMENT</div>
+    <h2 class="reveal d1">Where this experience points next.</h2>
+    <div class="future-grid">
+      <div class="future-card reveal d1"><div class="ic"><i data-lucide="monitor-dot"></i></div><h3>SCADA Systems</h3><p>Supervisory control across full plant operations.</p></div>
+      <div class="future-card reveal d2"><div class="ic"><i data-lucide="wifi"></i></div><h3>Industrial IoT</h3><p>Connected sensors and real-time data networks.</p></div>
+      <div class="future-card reveal d3"><div class="ic"><i data-lucide="bot"></i></div><h3>Robot Automation</h3><p>Robotic integration into production lines.</p></div>
+      <div class="future-card reveal d4"><div class="ic"><i data-lucide="scan-eye"></i></div><h3>Vision Systems</h3><p>Machine vision for quality and inspection.</p></div>
+      <div class="future-card reveal d5"><div class="ic"><i data-lucide="layers"></i></div><h3>MES</h3><p>Manufacturing execution & process visibility.</p></div>
+      <div class="future-card reveal d6"><div class="ic"><i data-lucide="brain-circuit"></i></div><h3>AI for Manufacturing</h3><p>Intelligent monitoring and predictive maintenance.</p></div>
+    </div>
+  </div>
+  <footer class="slide-foot"><span>FUTURE CAREER DEVELOPMENT</span><span>11 / 14</span></footer>
+</section>
+
+<section class="slide" id="s12">
+  <div class="inner">
+    <div class="eyebrow" style="color:var(--orange);"><span class="dash" style="background:#fff;"></span>CONCLUSION</div>
+    <h2 class="reveal d1" style="color:#fff;">From student to industrial engineer-in-training.</h2>
+    <p class="lead reveal d2" style="color:#b9c7dc;">Nine weeks at M2K ACT transformed theoretical knowledge into industrial judgment — diagnosing real faults, maintaining real machines, and learning to think like a working engineer.</p>
+    <div class="quote reveal d3">"An engineer is not measured by what they know, but by what they can <span>fix</span> when it matters."</div>
+  </div>
+  <footer class="slide-foot"><span>CONCLUSION</span><span>12 / 14</span></footer>
+</section>
+
+<section class="slide" id="s13">
+  <div class="inner">
+    <div class="eyebrow"><span class="dash"></span>ACKNOWLEDGEMENT</div>
+    <h2 class="reveal d1">With thanks.</h2>
+    <div class="ack-list reveal d2">
+      <div class="ack-item"><i data-lucide="building-2"></i><div><strong>M2K ACT Co., Ltd.</strong>For the opportunity and trust placed in a student engineer.</div></div>
+      <div class="ack-item"><i data-lucide="user-check"></i><div><strong>Industrial Supervisors</strong>For daily guidance across PLC and maintenance work.</div></div>
+      <div class="ack-item"><i data-lucide="users"></i><div><strong>Engineering Department & Colleagues</strong>For collaboration and on-the-job mentorship.</div></div>
+      <div class="ack-item"><i data-lucide="graduation-cap"></i><div><strong>Burapha University & Faculty Advisors</strong>For academic guidance throughout this placement.</div></div>
+    </div>
+  </div>
+  <footer class="slide-foot"><span>ACKNOWLEDGEMENT</span><span>13 / 14</span></footer>
+</section>
+
+<section class="slide" id="s14">
+  <div class="pulse-ring"></div>
+  <div class="inner reveal d1" style="position:relative;z-index:2;">
+    <div class="eyebrow" style="justify-content:center;color:var(--orange);"><span class="dash" style="background:#fff;"></span>THANK YOU<span class="dash" style="background:#fff;"></span></div>
+    <h1>Questions?</h1>
+    <p>Prerapat Jintana &nbsp;·&nbsp; Mechanical Engineering &nbsp;·&nbsp; Burapha University</p>
+  </div>
+  <footer class="slide-foot"><span>M2K ACT CO., LTD.</span><span>14 / 14</span></footer>
+</section>
+
+<script>
+lucide.createIcons();
+
+const slides = Array.from(document.querySelectorAll('.slide'));
+const dotsWrap = document.getElementById('navdots');
+slides.forEach((s,i)=>{
+  const b = document.createElement('button');
+  b.addEventListener('click',(e)=>{e.stopPropagation();goTo(i);});
+  dotsWrap.appendChild(b);
+});
+const dots = dotsWrap.querySelectorAll('button');
+
+let current = 0;
+let isAnimating = false;
+
+function setActive(idx){
+  current = idx;
+  dots.forEach(d=>d.classList.remove('active'));
+  dots[idx]?.classList.add('active');
+  slides.forEach((s,i)=>{ if(i===idx) s.classList.add('in-view'); else s.classList.remove('in-view'); });
+}
+
+function goTo(idx){
+  if(idx<0 || idx>=slides.length || isAnimating) return;
+  isAnimating = true;
+  slides[idx].scrollIntoView({behavior:'smooth', block:'start'});
+  setActive(idx);
+  setTimeout(()=>{isAnimating=false;}, 700);
+}
+
+function next(){ goTo(current+1); }
+function prev(){ goTo(current-1); }
+
+// click anywhere to advance (ignore clicks on interactive controls / dots)
+document.addEventListener('click', (e)=>{
+  if(e.target.closest('#navdots') || e.target.closest('a') || e.target.closest('button')) return;
+  next();
+});
+
+// keyboard: Enter / Space / ArrowDown / PageDown -> next, ArrowUp / PageUp -> prev
+document.addEventListener('keydown', (e)=>{
+  if(['Enter',' ','ArrowDown','PageDown'].includes(e.key)){ e.preventDefault(); next(); }
+  else if(['ArrowUp','PageUp'].includes(e.key)){ e.preventDefault(); prev(); }
+});
+
+// wheel: step one slide per gesture instead of free scroll
+let wheelLock = false;
+document.addEventListener('wheel', (e)=>{
+  e.preventDefault();
+  if(wheelLock) return;
+  wheelLock = true;
+  if(e.deltaY > 12) next();
+  else if(e.deltaY < -12) prev();
+  setTimeout(()=>{wheelLock=false;}, 650);
+}, {passive:false});
+
+// touch swipe
+let touchStartY = null;
+document.addEventListener('touchstart', e=>{ touchStartY = e.touches[0].clientY; });
+document.addEventListener('touchend', e=>{
+  if(touchStartY===null) return;
+  const diff = touchStartY - e.changedTouches[0].clientY;
+  if(Math.abs(diff) > 50){ diff>0 ? next() : prev(); }
+  touchStartY = null;
+});
+
+window.addEventListener('scroll',()=>{
+  const h = document.documentElement;
+  const pct = (h.scrollTop)/(h.scrollHeight-h.clientHeight)*100;
+  document.getElementById('progress').style.width = pct+'%';
+});
+
+// init first slide
+setActive(0);
+</script>
+</body>
+</html>
